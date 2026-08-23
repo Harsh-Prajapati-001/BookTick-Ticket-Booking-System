@@ -29,7 +29,19 @@ npm run dev
 ```
 
 ## Environment Variables (.env)
-Create a `.env` file in the `server/` directory based on the `.env.example` file.
+Create a `.env` file in the `server/` directory before running the backend. Do **not** commit this file.
+
+Required variables:
+```
+PORT=5000
+FRONTEND_URL=http://localhost:5173
+MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/ticket-booking
+JWT_SECRET=super_secret_jwt_key
+EMAIL_HOST=smtp.ethereal.email
+EMAIL_PORT=587
+EMAIL_USER=your_test_email
+EMAIL_PASS=your_test_password
+```
 
 ## API Documentation
 * **Auth**: `POST /api/auth/register`, `POST /api/auth/login`
