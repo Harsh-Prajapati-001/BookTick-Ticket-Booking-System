@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../lib/api';
 
 export default function Home() {
   const [events, setEvents] = useState<any[]>([]);
