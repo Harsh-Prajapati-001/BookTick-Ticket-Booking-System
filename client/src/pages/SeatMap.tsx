@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 
 type SeatStatus = 'AVAILABLE' | 'HELD' | 'BOOKED';
 
@@ -17,7 +17,6 @@ export default function SeatMap() {
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   
   useEffect(() => {
-    // Mock seat grid generation (to be replaced by API call to /api/shows/:id/seatmap)
     const mockSeats: Seat[] = [];
     const rows = ['A', 'B', 'C', 'D'];
     rows.forEach((r, rIdx) => {
@@ -43,60 +42,98 @@ export default function SeatMap() {
 
   const handleCheckout = () => {
     if (selectedSeats.length === 0) return;
-    alert(`Holding seats: ${selectedSeats.join(', ')}\n\nInitiating atomic Compare-And-Swap (CAS) backend call...`);
-    // Will call api.post(`/shows/${id}/hold`, { seatIds: selectedSeats })
+    alert(`Holding your seats for 10 minutes.`);
   };
 
   return (
-    <div className="min-h-screen bg-background text-text p-8 flex flex-col items-center">
-      <h2 className="text-3xl font-bold mb-8 text-primary">Select Your Seats</h2>
-      
-      {/* Screen visual */}
-      <div className="w-full max-w-2xl bg-secondary/20 h-12 rounded-t-3xl flex items-center justify-center mb-12 shadow-[0_10px_30px_rgba(59,130,246,0.1)]">
-        <span className="text-secondary tracking-widest uppercase text-sm">Screen</span>
-      </div>
+    <div className="min-h-screen bg-[var(--color-parchment)] text-[var(--color-deep-lagoon)] pb-32">
+      <header className="flex justify-between items-center px-8 py-6 max-w-[var(--page-max-width)] mx-auto">
+        <Link to="/" className="text-[24px] font-[600] tracking-[0.48px] text-[var(--color-deep-lagoon)]">BookTick</Link>
+        <Link to="/login" className="px-[28px] py-[16px] bg-transparent border-[1.5px] border-[var(--color-deep-lagoon)] rounded-[var(--radius-buttons)] text-[16px] font-[500] hover:bg-[var(--color-deep-lagoon)] hover:text-[var(--color-parchment)] transition uppercase tracking-[0.32px]">Log in</Link>
+      </header>
 
-      {/* Seat Grid */}
-      <div className="grid grid-cols-8 gap-4 mb-12">
-        {seats.map((seat) => {
-          const isSelected = selectedSeats.includes(seat._id);
-          let colorClass = 'bg-surface border-secondary/30 text-text hover:border-primary cursor-pointer';
+      <section className="px-8 py-[40px] md:py-[var(--section-gap)] max-w-[var(--page-max-width)] mx-auto text-center">
+        <h2 className="text-[48px] font-[600] tracking-[4.8px] mb-8 leading-[1.14]">Select Your Seats</h2>
+      </section>
+
+      <main className="bg-[var(--color-mint-wash)] px-8 py-[var(--section-gap)]">
+        <div className="max-w-[800px] mx-auto flex flex-col items-center">
           
-          if (seat.status === 'BOOKED') colorClass = 'bg-secondary/20 border-secondary/10 text-secondary/30 cursor-not-allowed';
-          if (seat.status === 'HELD') colorClass = 'bg-accent/20 border-accent/40 text-accent cursor-not-allowed';
-          if (isSelected) colorClass = 'bg-primary border-primary text-white shadow-lg shadow-primary/30';
+          {/* Screen visual */}
+          <div className="w-full max-w-2xl bg-[var(--color-deep-lagoon)]/10 h-8 rounded-t-[24px] border-t border-x border-[var(--color-ink-black)]/20 flex items-center justify-center mb-16">
+            <span className="text-[var(--color-deep-lagoon)] tracking-widest uppercase text-[14px] font-[500] opacity-60">Screen</span>
+          </div>
 
-          return (
-            <div 
-              key={seat._id}
-              onClick={() => toggleSeat(seat._id, seat.status)}
-              className={`w-12 h-12 rounded-t-lg rounded-b flex items-center justify-center border-2 transition-all font-bold ${colorClass}`}
-              title={`${seat.category} - ${seat.row}${seat.number}`}
-            >
-              {seat.row}{seat.number}
+          {/* Seat Grid */}
+          <div className="overflow-x-auto w-full pb-8">
+            <div className="inline-grid grid-cols-8 gap-2 min-w-max mx-auto">
+              {seats.map((seat) => {
+                const isSelected = selectedSeats.includes(seat._id);
+                let btnClass = 'bg-[var(--color-parchment)] border-[var(--color-deep-lagoon)]/40 text-[var(--color-deep-lagoon)] hover:border-[var(--color-electric-iris)] cursor-pointer';
+                let ariaAttr = {};
+                let content: React.ReactNode = `${seat.row}${seat.number}`;
+                
+                if (seat.status === 'BOOKED') {
+                  btnClass = 'bg-[var(--color-deep-lagoon)]/12 border-transparent text-transparent cursor-not-allowed';
+                  ariaAttr = { 'aria-disabled': true };
+                  content = (
+                    <div className="w-full h-full opacity-30" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 2px, var(--color-deep-lagoon) 2px, var(--color-deep-lagoon) 4px)' }}></div>
+                  );
+                } else if (seat.status === 'HELD') {
+                  btnClass = 'bg-[var(--color-mint-wash)] border-dashed border-[var(--color-deep-lagoon)] text-transparent cursor-not-allowed';
+                  ariaAttr = { 'aria-label': 'Held by another user', 'aria-disabled': true };
+                  content = <span className="text-[12px] opacity-60 text-[var(--color-deep-lagoon)]">⏱</span>;
+                } else if (isSelected) {
+                  btnClass = 'bg-[var(--color-electric-iris)] border-transparent text-[var(--color-parchment)]';
+                  ariaAttr = { 'aria-pressed': true };
+                  content = <span className="text-[16px]">✓</span>;
+                }
+
+                return (
+                  <button 
+                    key={seat._id}
+                    onClick={() => toggleSeat(seat._id, seat.status)}
+                    className={`w-12 h-12 rounded-[8px] border flex items-center justify-center transition-all font-[500] text-[14px] overflow-hidden ${btnClass}`}
+                    title={`${seat.category} - ${seat.row}${seat.number}`}
+                    {...ariaAttr}
+                  >
+                    {content}
+                  </button>
+                );
+              })}
             </div>
-          );
-        })}
-      </div>
+          </div>
 
-      {/* Legend */}
-      <div className="flex gap-6 mb-12">
-        <div className="flex items-center gap-2"><div className="w-4 h-4 bg-surface border-2 border-secondary/30 rounded"></div> Available</div>
-        <div className="flex items-center gap-2"><div className="w-4 h-4 bg-primary rounded"></div> Selected</div>
-        <div className="flex items-center gap-2"><div className="w-4 h-4 bg-accent/20 border-2 border-accent/40 rounded"></div> Held</div>
-        <div className="flex items-center gap-2"><div className="w-4 h-4 bg-secondary/20 rounded"></div> Booked</div>
-      </div>
+          {/* Legend */}
+          <div className="flex flex-wrap justify-center gap-6 mt-8">
+            <div className="flex items-center gap-2 text-[14px] font-[500] bg-[var(--color-mint-wash)] px-4 py-2 rounded-[var(--radius-badges)] border border-[var(--color-ink-black)]/10">
+              <div className="w-4 h-4 bg-[var(--color-parchment)] border border-[var(--color-deep-lagoon)]/40 rounded-[4px]"></div> Available
+            </div>
+            <div className="flex items-center gap-2 text-[14px] font-[500] bg-[var(--color-mint-wash)] px-4 py-2 rounded-[var(--radius-badges)] border border-[var(--color-ink-black)]/10">
+              <div className="w-4 h-4 bg-[var(--color-electric-iris)] rounded-[4px] flex items-center justify-center text-white text-[10px]">✓</div> Selected
+            </div>
+            <div className="flex items-center gap-2 text-[14px] font-[500] bg-[var(--color-mint-wash)] px-4 py-2 rounded-[var(--radius-badges)] border border-[var(--color-ink-black)]/10">
+              <div className="w-4 h-4 bg-[var(--color-mint-wash)] border border-dashed border-[var(--color-deep-lagoon)] rounded-[4px] flex items-center justify-center text-[8px] opacity-60">⏱</div> Held
+            </div>
+            <div className="flex items-center gap-2 text-[14px] font-[500] bg-[var(--color-mint-wash)] px-4 py-2 rounded-[var(--radius-badges)] border border-[var(--color-ink-black)]/10">
+              <div className="w-4 h-4 bg-[var(--color-deep-lagoon)]/12 rounded-[4px]" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 2px, var(--color-deep-lagoon) 2px, var(--color-deep-lagoon) 4px)' }}></div> Booked
+            </div>
+          </div>
+        </div>
+      </main>
 
       {/* Checkout Bar */}
       {selectedSeats.length > 0 && (
-        <div className="fixed bottom-0 left-0 w-full bg-surface border-t border-secondary/20 p-6 flex justify-between items-center shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-          <div>
-            <p className="text-sm text-secondary">Selected</p>
-            <p className="text-xl font-bold text-white">{selectedSeats.length} Seat(s)</p>
+        <div className="fixed bottom-0 left-0 w-full bg-[var(--color-parchment)] border-t border-[var(--color-ink-black)]/10 p-6 flex justify-between items-center shadow-[var(--shadow-sm)] z-50">
+          <div className="max-w-[var(--page-max-width)] mx-auto w-full flex justify-between items-center px-4">
+            <div>
+              <p className="text-[14px] font-[500] text-[var(--color-deep-lagoon)] opacity-60 tracking-[0.28px]">Selected</p>
+              <p className="text-[24px] font-[600] text-[var(--color-deep-lagoon)] tracking-[0.48px]">{selectedSeats.length} seat(s)</p>
+            </div>
+            <button onClick={handleCheckout} className="bg-[var(--color-electric-iris)] text-[var(--color-parchment)] px-[28px] py-[16px] rounded-[var(--radius-buttons)] font-[500] text-[16px] hover:opacity-90 transition">
+              Hold & checkout
+            </button>
           </div>
-          <button onClick={handleCheckout} className="bg-primary text-white px-8 py-3 rounded font-bold hover:bg-opacity-90 transition shadow-lg">
-            Hold & Checkout
-          </button>
         </div>
       )}
     </div>

@@ -1,13 +1,27 @@
 @import "tailwindcss";
+@import "./styles/variables.css";
 
 @theme {
-  --color-primary: #3B82F6;
-  --color-secondary: #64748B;
-  --color-accent: #06B6D4;
-  --color-background: #0F172A;
-  --color-surface: #1E293B;
-  --color-text: #F8FAFC;
-  --font-sans: "Carl Brown", sans-serif;
+  --color-parchment: #fffef0;
+  --color-mint-wash: #d7ffc2;
+  --color-deep-lagoon: #004449;
+  --color-electric-iris: #483cff;
+  --color-ink-black: #000000;
+  --color-lime-pulse: #0bff80;
+  
+  --font-pp-mori: 'Inter', sans-serif;
+  
+  --radius-cards: 24px;
+  --radius-buttons: 900px;
+  --radius-inputs: 16px;
+  --radius-badges: 900px;
+  
+  --shadow-sm: rgba(0,0,0,0.04) 0 2px 8px;
+  
+  --page-max-width: 1200px;
+  --section-gap: 80px;
+  --card-padding: 32px;
+  
   --breakpoint-mobile: 320px;
   --breakpoint-tablet: 768px;
   --breakpoint-desktop-sm: 1024px;
@@ -15,7 +29,18 @@
 }
 
 @layer base {
+  html { -webkit-font-smoothing: antialiased; }
   body {
-    @apply bg-background text-text font-sans antialiased;
+    background: var(--color-parchment);
+    color: var(--color-deep-lagoon);
+    font-family: var(--font-pp-mori);
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.36px;
+    font-feature-settings: "ss01" on;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-electric-iris);
+    outline-offset: 2px;
   }
 }

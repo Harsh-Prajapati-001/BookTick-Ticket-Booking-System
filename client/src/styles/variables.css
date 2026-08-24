@@ -1,0 +1,21 @@
+:root {
+  --color-parchment: #fffef0;
+  --color-mint-wash: #d7ffc2;
+  --color-deep-lagoon: #004449;
+  --color-electric-iris: #483cff;
+  --color-ink-black: #000000;
+  --color-lime-pulse: #0bff80;
+  
+  --font-pp-mori: 'Inter', sans-serif;
+  
+  --radius-cards: 24px;
+  --radius-buttons: 900px;
+  --radius-inputs: 16px;
+  --radius-badges: 900px;
+  
+  --shadow-sm: rgba(0,0,0,0.04) 0 2px 8px;
+  
+  --page-max-width: 1200px;
+  --section-gap: 80px;
+  --card-padding: 32px;
+}
