@@ -1,6 +1,8 @@
 # BookTick - Ticket Booking System
 
-A high-concurrency ticket booking platform for movies and concerts, built on the **MERN Stack** (MongoDB, Express, React, Node.js). 
+**Live Demo:** [https://booktick-ticket-booking-system.netlify.app/](https://booktick-ticket-booking-system.netlify.app/)
+
+A full-stack (MERN) high-concurrency ticket booking platform designed to handle massive traffic spikes and prevent double-booking using atomic Compare-And-Swap (CAS) locking. Built with React (Vite), Node.js, Express, and MongoDB.
 
 This system features visual seat maps, short-lived seat holds, waitlists with automatic seat assignments on cancellation, and concurrency-safe bookings.
 
